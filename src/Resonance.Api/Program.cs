@@ -17,13 +17,14 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<RoomService>();
+builder.Services.AddSingleton<RoomSyncServiceV2>();
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseCors();
 
-var frontendPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "..", "resonance2-front"));
+var frontendPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "..", "..", "resonance2-front"));
 
 if (Directory.Exists(frontendPath))
 {
@@ -46,5 +47,6 @@ if (Directory.Exists(frontendPath))
 }
 
 app.MapHub<MusicHub>("/musicHub");
+app.MapHub<MusicHubV2>("/musicHubV2");
 
 app.Run();
