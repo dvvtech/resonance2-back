@@ -1,0 +1,27 @@
+services:
+  resonance_api:    
+    image: ghcr.io/dvvtech/resonance2-back:latest
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Prod      
+    networks:
+      - public-network5
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.resonance-api.rule=Host(`api.cloud-platform.pro`) && PathPrefix(`/resonance`)"
+        - "traefik.http.routers.resonance-api.entrypoints=websecure"
+        - "traefik.http.routers.resonance-api.tls.certresolver=letsencrypt"
+        - "traefik.http.services.resonance-api.loadbalancer.server.port=8080"
+        - "traefik.http.middlewares.resonance-stripprefix.stripprefix.prefixes=/resonance"
+        - "traefik.http.routers.resonance-api.middlewares=resonance-stripprefix"      
+
+networks:
+  public-network5:
+    external: true
+    name: public-network5
