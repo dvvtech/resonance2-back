@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="Resonance.Api/Resonance.Api.csproj" />
+  <Folder Name="/deploy/" />
+  <Folder Name="/src/">
+    <Project Path="src/Resonance.Api/Resonance.Api.csproj" />
+  </Folder>
 </Solution>
