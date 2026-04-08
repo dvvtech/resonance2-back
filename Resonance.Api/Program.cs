@@ -1,17 +1,50 @@
+using Microsoft.Extensions.FileProviders;
+using Resonance.Api.Hubs;
+using Resonance.Api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy
+            .SetIsOriginAllowed(_ => true)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<RoomService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
 app.UseHttpsRedirection();
+app.UseCors();
 
-app.UseAuthorization();
+var frontendPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "..", "resonance2-front"));
 
-app.MapControllers();
+if (Directory.Exists(frontendPath))
+{
+    var frontendFiles = new PhysicalFileProvider(frontendPath);
+
+    app.UseDefaultFiles(new DefaultFilesOptions
+    {
+        FileProvider = frontendFiles,
+    });
+
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = frontendFiles,
+    });
+
+    app.MapFallbackToFile("{*path:nonfile}", "index.html", new StaticFileOptions
+    {
+        FileProvider = frontendFiles,
+    });
+}
+
+app.MapHub<MusicHub>("/musicHub");
 
 app.Run();
