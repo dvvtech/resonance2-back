@@ -6,7 +6,7 @@ namespace Resonance.Api.Services;
 
 public sealed class RoomSyncServiceV2
 {
-    private const int PlayLeadTimeMs = 3000;
+    private const int PlayLeadTimeMs = 1500;
     private const int SeekLeadTimeMs = 1000;
 
     private readonly ConcurrentDictionary<string, RoomV2> _rooms = new(StringComparer.OrdinalIgnoreCase);
